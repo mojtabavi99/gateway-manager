@@ -1,0 +1,163 @@
+/* Fonts */
+@font-face {
+    font-family: "Yekan-Light";
+    src: url("../vendor/fonts/yekan-bakh/YekanBakhFaNum-Light.woff2") format('woff2');
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+@font-face {
+    font-family: "Yekan-Regular";
+    src: url("../vendor/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2") format('woff2');
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+@font-face {
+    font-family: "Yekan-Bold";
+    src: url("../vendor/fonts/yekan-bakh/YekanBakhFaNum-Bold.woff2") format('woff2');
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+@font-face {
+    font-family: "Estedad-Light";
+    src: url("../vendor/fonts/estedad/Estedad-Light.ttf");
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+@font-face {
+    font-family: "Estedad-Regular";
+    src: url("../vendor/fonts/estedad/Estedad-Regular.ttf");
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+@font-face {
+    font-family: "Estedad-Bold";
+    src: url("../vendor/fonts/estedad/Estedad-Bold.ttf");
+    font-style: normal;
+    unicode-range:
+        U+0600-06FF,
+        /* حروف فارسی */
+        U+06F0-06F9,
+        /* اعداد فارسی */
+        U+0660-0669,
+        /* اعداد عربی */
+        U+FB50-FDFF,
+        /* Presentation Forms-A */
+        U+FE70-FEFF;
+    /* Presentation Forms-B */
+}
+
+:root {
+    --font-yekan-light: "Yekan-Light", sans-serif;
+    --font-yekan-regular: "Yekan-Regular", sans-serif;
+    --font-yekan-bold: "Yekan-Bold", sans-serif;
+
+    --font-estedad-light: "Estedad-Light", sans-serif;
+    --font-estedad-regular: "Estedad-Regular", sans-serif;
+    --font-estedad-bold: "Estedad-Bold", sans-serif;
+}
+
+/* Smooth scroll */
+:root {
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar:horizontal {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #979797;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* General */
+body,
+html {
+    font-family: var(--font-yekan-regular), sans-serif;
+    direction: rtl;
+}
+
+a {
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+* {
+    font-family: var(--font-yekan-light), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-yekan-bold), sans-serif !important;
+}

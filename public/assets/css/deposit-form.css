@@ -1,0 +1,42 @@
+.gateway-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.gateway-option img {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    border-radius: 5px;
+    transition: all 0.1s ease;
+}
+
+.gateway-option span {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+.gateway-option input[type="radio"] {
+    display: none;
+}
+
+.gateway-option:hover img {
+    transform: scale(1.05);
+}
+
+.gateway-option input[type="radio"]:checked + img,
+.gateway-option input[type="radio"]:checked ~ img {
+    border: 2px solid #f5821f;
+    box-shadow: 0 0 8px rgba(245, 130, 31, 0.5);
+}
+
+.gateway-option input[type="radio"]:checked ~ span {
+    color: #f5821f;
+    font-weight: 600;
+}
