@@ -158,13 +158,15 @@ class Handler extends ExceptionHandler
      */
     protected function handleWebException(Throwable $e): Response|RedirectResponse
     {
-        dd($e);
+        $debug = config('app.debug');
+        $message = $debug ? $e->getMessage() : '';
+
+        // TODO: I think this section is not required
         if ($e instanceof BaseException) {
-            return response()->view('errors.generic', [
+            return response()->view('errors.500', [
                 'title' => 'ERROR!',
-                'message' => $e->getMessage(),
+                'message' => $message,
                 'status' => $e->getStatusCode(),
-                'data' => $e->getData(),
             ], $e->getStatusCode());
         }
 
@@ -175,9 +177,9 @@ class Handler extends ExceptionHandler
         $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR;
 
         if (view()->exists("errors.$status")) {
-            return response()->view("errors.$status", ['message' => $e->getMessage()], $status);
+            return response()->view("errors.$status", ['message' => $message], $status);
         }
 
-        return response()->view('errors.generic', ['message' => $e->getMessage(), 'status' => $status], $status);
+        return response()->view('errors.500', ['message' => $message, 'status' => $status], $status);
     }
 }

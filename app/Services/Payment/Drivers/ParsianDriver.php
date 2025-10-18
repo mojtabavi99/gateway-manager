@@ -2,11 +2,11 @@
 
 namespace App\Services\Payment\Drivers;
 
-use SoapClient;
-use SoapFault;
 use App\Exceptions\BaseException;
 use App\Services\Payment\Contracts\PaymentDriver;
 use App\Traits\ExceptionTrait;
+use SoapClient;
+use SoapFault;
 
 class ParsianDriver implements PaymentDriver
 {
@@ -28,6 +28,7 @@ class ParsianDriver implements PaymentDriver
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
     {
@@ -47,7 +48,7 @@ class ParsianDriver implements PaymentDriver
 
             $token = $result->SalePaymentRequestResult->Token ?? null;
             $status = (string)($result->SalePaymentRequestResult->Status ?? -1);
-            $message = $result->SalePaymentRequestResult->Message ?? __('transaction.connection_failed', 'پارسیان');
+            $message = $result->SalePaymentRequestResult->Message ?? __('transaction.connection_failed', ['gateway' => 'پارسیان']);
 
             if ($status == '0' && $token) {
                 return [
@@ -64,15 +65,13 @@ class ParsianDriver implements PaymentDriver
             ];
 
         } catch (SoapFault|BaseException $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function verify(array $data): array
     {
@@ -114,11 +113,7 @@ class ParsianDriver implements PaymentDriver
             ];
 
         } catch (SoapFault|BaseException $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'refId' => $rrn,
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 

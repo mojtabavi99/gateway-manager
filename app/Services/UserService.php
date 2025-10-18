@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Exceptions\BaseException;
-use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Traits\ExceptionTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 
 class UserService extends Service

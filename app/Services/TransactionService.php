@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\Gateway;
 use App\Enums\Status;
 use App\Exceptions\BaseException;
 use App\Models\Transaction;
@@ -61,6 +60,7 @@ class TransactionService extends Service
     /**
      * @param Transaction $transaction
      * @return array|JsonResponse
+     * @throws BaseException
      */
     public function initiatePayment(Transaction $transaction): array|JsonResponse
     {
@@ -84,10 +84,13 @@ class TransactionService extends Service
                 return $this->response->error($response['message']);
             }
         } catch (\Exception $e) {
-            return $this->response->error($e->getMessage());
+            $this->throwServerError($e->getMessage());
         }
     }
 
+    /**
+     * @throws BaseException
+     */
     public function verifyPayment(Transaction $transaction, array $data): array|JsonResponse
     {
         try {
@@ -105,13 +108,11 @@ class TransactionService extends Service
                 'transaction' => $updated_transaction,
             ]);
         } catch (\Exception $e) {
-            $updated_transaction = $this->transactionRepository->update($transaction->id, [
+            $this->transactionRepository->update($transaction->id, [
                 'status' => Status::FAILED,
             ]);
 
-            return $this->response->error($e->getMessage(), [
-                'transaction' => $updated_transaction,
-            ]);
+            $this->throwServerError($e->getMessage());
         }
     }
 }

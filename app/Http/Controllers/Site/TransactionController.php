@@ -8,11 +8,11 @@ use App\Http\Requests\DepositRequest;
 use App\Models\Transaction;
 use App\Services\TransactionService;
 use App\Traits\ExceptionTrait;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class TransactionController extends Controller
 {
@@ -36,7 +36,8 @@ class TransactionController extends Controller
         if ($response['success']) {
             return redirect()->route('transaction.site.initiate_payment', $response['data']['id']);
         } else {
-            return redirect()->back()->with('danger', $response['message']);
+            Alert::toast($response['message'], 'error');
+            return redirect()->back();
         }
     }
 
@@ -51,7 +52,8 @@ class TransactionController extends Controller
             return redirect($response['data']['redirect_url']);
         }
 
-        return redirect()->back()->with('danger', $response['message']);
+        Alert::toast($response['message'], 'error');
+        return redirect()->back();
     }
 
     /**
@@ -66,6 +68,8 @@ class TransactionController extends Controller
         if (empty($data)) {
             $this->throwValidation('');
         }
+
+        $data['amount'] = $transaction->amount;
 
         $response = $this->transactionService->verifyPayment($transaction, $data);
 

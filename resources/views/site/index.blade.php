@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('page_title', 'Page Title')
+
 @section('external_stylesheet')
     <link rel="stylesheet" href="{{ asset('assets/css/deposit-form.css') }}"/>
 @endsection

@@ -11,9 +11,8 @@ class ResponseFactory
      */
     public static function make(Request $request): ResponseInterface
     {
-        return match (true) {
-            $request->expectsJson(), $request->is('api/*') => new ApiResponse(),
-            default => new WebResponse(),
-        };
+        return ($request->expectsJson() || $request->is('api/*'))
+            ? new ApiResponse()
+            : new WebResponse();
     }
 }

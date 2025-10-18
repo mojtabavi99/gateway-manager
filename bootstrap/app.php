@@ -1,10 +1,10 @@
 <?php
 
+use App\Exceptions\Handler as AppHandler;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Exceptions\Handler as AppHandler;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

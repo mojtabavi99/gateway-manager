@@ -6,10 +6,6 @@
 
     <title>@yield('page_title')</title>
 
-    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/bootstrap.rtl.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.min.css') }}"/>
-
     @yield('external_stylesheet')
     @stack('internal_stylesheet')
 </head>
@@ -28,9 +24,6 @@
 </main>
 
 <script src="{{ asset('assets/vendor/jquery/jquery.min.js')}}"></script>
-<script src="{{ asset('assets/vendor/bootstrap/bootstrap.bundle.min.js')}}"></script>
-
-@include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"])
 
 @yield('external_scripts')
 @stack('internal_scripts')

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Traits\ExceptionTrait;
 
 class UserRepository extends Repository
 {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment\Drivers;
 
+use App\Exceptions\BaseException;
 use SoapClient;
 use SoapFault;
 use App\Services\Payment\Contracts\PaymentDriver;
@@ -34,6 +35,7 @@ class ZarinpalDriver implements PaymentDriver
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
     {
@@ -66,19 +68,17 @@ class ZarinpalDriver implements PaymentDriver
 
             return [
                 'success' => false,
-                'message' => __('transaction.connection_failed', 'زرین پال'),
+                'message' => __('transaction.connection_failed', ['gateway' => 'زرین پال']),
             ];
 
         } catch (SoapFault|\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function verify(array $data): array
     {
@@ -120,11 +120,7 @@ class ZarinpalDriver implements PaymentDriver
             ];
 
         } catch (SoapFault|\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'refId' => null,
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 }

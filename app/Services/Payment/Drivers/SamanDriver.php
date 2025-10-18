@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment\Drivers;
 
+use App\Exceptions\BaseException;
 use App\Services\Payment\Contracts\PaymentDriver;
 
 use App\Traits\ExceptionTrait;
@@ -33,6 +34,7 @@ class SamanDriver implements PaymentDriver
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
     {
@@ -45,7 +47,7 @@ class SamanDriver implements PaymentDriver
             if (!$result || $result <= 0) {
                 return [
                     'success' => false,
-                    'message' => __('transaction.connection_failed', 'سامان'),
+                    'message' => __('transaction.connection_failed', ['gateway' => 'سامان'])
                 ];
             }
 
@@ -57,15 +59,13 @@ class SamanDriver implements PaymentDriver
             ];
 
         } catch (SoapFault|\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function verify(array $data): array
     {
@@ -100,11 +100,7 @@ class SamanDriver implements PaymentDriver
             ];
 
         } catch (SoapFault|\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'refId' => $refNum,
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 

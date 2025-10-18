@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment\Drivers;
 
+use App\Exceptions\BaseException;
 use App\Services\Payment\Contracts\PaymentDriver;
 use App\Traits\ExceptionTrait;
 use Illuminate\Support\Facades\Http;
@@ -34,6 +35,7 @@ class SadadDriver implements PaymentDriver
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
     {
@@ -55,7 +57,7 @@ class SadadDriver implements PaymentDriver
 
             $resCode = $response->ResCode ?? -1;
             $token = $response->Token ?? null;
-            $message = $response->Description ?? __('transaction.connection_failed', 'سداد');
+            $message = $response->Description ?? __('transaction.connection_failed', ['gateway' => 'سداد']);
 
             if ($resCode == 0 && $token) {
                 return [
@@ -71,15 +73,13 @@ class SadadDriver implements PaymentDriver
                 'message' => $message,
             ];
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 
     /**
      * @inheritDoc
+     * @throws BaseException
      */
     public function verify(array $data): array
     {
@@ -90,7 +90,7 @@ class SadadDriver implements PaymentDriver
         if ($resCode != 0 || !$token || !$orderId) {
             return [
                 'success' => false,
-                'message' => 'Transaction was cancelled or encountered an error.',
+                'message' => __('transaction.verify_payment_failed'),
                 'token' => $token,
                 'refId' => null,
             ];
@@ -114,10 +114,7 @@ class SadadDriver implements PaymentDriver
                 'refId' => $refId,
             ];
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            $this->throwServerError($e->getMessage());
         }
     }
 
