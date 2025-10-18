@@ -47,33 +47,33 @@ class SadadDriver implements PaymentDriver
                 'Amount' => $amountInRial,
                 'SignData' => $signData,
                 'ReturnUrl' => $callBackUrl,
-                'LocalDateTime' => now()->format('m/d/Y g:i:s a'),
+                'LocalDateTime' => now()->format('Y/m/d H:i:s'),
                 'OrderId' => $transactionId,
             ];
 
             $response = $this->callApi($this->initWsdl, $payload);
-            if (!$response || $response->ResCode != 0) {
+
+            $resCode = $response->ResCode ?? -1;
+            $token = $response->Token ?? null;
+            $message = $response->Description ?? __('transaction.connection_failed', 'سداد');
+
+            if ($resCode == 0 && $token) {
                 return [
-                    'success' => false,
-                    'message' => $response->Description ?? 'Error connecting to Sadad gateway',
-                    'redirect_url' => null,
-                    'token' => null,
+                    'success' => true,
+                    'message' => __('transaction.payment_initiated'),
+                    'redirect_url' => "https://sadad.shaparak.ir/VPG/Purchase?Token={$token}",
+                    'token' => $token,
                 ];
             }
 
             return [
-                'success' => true,
-                'message' => 'Payment request created successfully.',
-                'redirect_url' => "https://sadad.shaparak.ir/VPG/Purchase?Token={$response->Token}",
-                'token' => $response->Token,
+                'success' => false,
+                'message' => $message,
             ];
-
         } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'redirect_url' => null,
-                'token' => null,
             ];
         }
     }
@@ -104,28 +104,19 @@ class SadadDriver implements PaymentDriver
 
             $response = $this->callApi($this->verifyWsdl, $payload);
 
-            if (!$response || $response->ResCode != 0) {
-                return [
-                    'success' => false,
-                    'message' => $response->Description ?? 'Transaction could not be verified.',
-                    'token' => $token,
-                    'refId' => null,
-                ];
-            }
+            $resCode = $response->ResCode ?? -1;
+            $refId = $response->RetrivalRefNo ?? null;
+            $message = $response->Description ?? __('transaction.verify_payment_failed');
 
             return [
-                'success' => true,
-                'message' => 'Transaction successfully verified.',
-                'token' => $token,
-                'refId' => $response->RetrivalRefNo ?? null,
+                'success' => $resCode == 0,
+                'message' => $message,
+                'refId' => $refId,
             ];
-
         } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'token' => $token,
-                'refId' => null,
             ];
         }
     }

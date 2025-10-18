@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('payment_gateways', function (Blueprint $table) {
             $table->id();
-            $table->integer('gateway_no')->unique();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->string('merchant_code', 255)->nullable();
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->string('logo', 255)->nullable();
             $table->boolean('is_primary')->default(false);
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->unsignedInteger('sort_order');
             $table->timestamps();
         });
     }

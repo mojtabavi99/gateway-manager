@@ -15,7 +15,7 @@
 
                     <hr class="mb-4">
 
-                    <form method="POST" action="{{ route('deposit') }}">
+                    <form method="POST" action="{{ route('transaction.site.deposit') }}">
                         @csrf
 
                         <p class="fw-bold mb-4">
@@ -66,7 +66,7 @@
                                 <div class="d-flex flex-wrap justify-content-center gap-4">
                                     @foreach($gateways as $item)
                                         <label class="gateway-option">
-                                            <input type="radio" name="gateway" value="{{ $item->gateway_no }}"
+                                            <input type="radio" name="gateway" value="{{ $item->slug }}"
                                                 @checked($item->is_primary)>
                                             <img src="{{ asset($item->logo) }}" alt="{{ $item->name }}">
                                             <span>{{ $item->name }}</span>

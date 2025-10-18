@@ -37,28 +37,28 @@ class ZarinpalDriver implements PaymentDriver
      */
     public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
     {
-        $amountInRial = $currency === 'T' ? $amount * 10 : $amount;
+        $amountInToman = $currency === 'R' ? $amount / 10 : $amount;
 
         try {
             $client = new SoapClient($this->isSandbox ? $this->sandboxWsdl : $this->productionWsdl);
 
             $params = [
                 'MerchantID' => $this->merchantId,
-                'Amount' => $amountInRial,
+                'Amount' => $amountInToman,
                 'Description' => "Payment for transaction #{$transactionId}",
                 'CallbackURL' => $callBackUrl,
             ];
 
             $response = $client->PaymentRequest($params);
 
-            if ($response->Status == 100) {
+            if ($response->Status == 100 || $response->Status == 101) {
                 $url = $this->isSandbox
                     ? "https://sandbox.zarinpal.com/pg/StartPay/{$response->Authority}"
                     : "https://www.zarinpal.com/pg/StartPay/{$response->Authority}";
 
                 return [
                     'success' => true,
-                    'message' => 'Payment request created successfully.',
+                    'message' => __('transaction.payment_initiated'),
                     'redirect_url' => $url,
                     'token' => $response->Authority,
                 ];
@@ -66,17 +66,13 @@ class ZarinpalDriver implements PaymentDriver
 
             return [
                 'success' => false,
-                'message' => "Zarinpal payment request failed: {$response->Status}",
-                'redirect_url' => null,
-                'token' => null,
+                'message' => __('transaction.connection_failed', 'زرین پال'),
             ];
 
         } catch (SoapFault|\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'redirect_url' => null,
-                'token' => null,
             ];
         }
     }
@@ -92,7 +88,7 @@ class ZarinpalDriver implements PaymentDriver
         if (!$authority || !$amount) {
             return [
                 'success' => false,
-                'message' => 'Authority or amount is missing.',
+                'message' => __('transaction.payment_failed'),
                 'token' => $authority,
                 'refId' => null,
             ];
@@ -109,19 +105,17 @@ class ZarinpalDriver implements PaymentDriver
 
             $response = $client->PaymentVerification($params);
 
-            if ($response->Status == 100) {
+            if ($response->Status == 100 || $response->Status == 101) {
                 return [
                     'success' => true,
-                    'message' => 'Transaction successfully verified.',
-                    'token' => $authority,
+                    'message' => __('transaction.payment_verified'),
                     'refId' => $response->RefID,
                 ];
             }
 
             return [
                 'success' => false,
-                'message' => "Transaction failed or not verified. Status: {$response->Status}",
-                'token' => $authority,
+                'message' => __('transaction.payment_failed'),
                 'refId' => null,
             ];
 
@@ -129,7 +123,6 @@ class ZarinpalDriver implements PaymentDriver
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'token' => $authority,
                 'refId' => null,
             ];
         }

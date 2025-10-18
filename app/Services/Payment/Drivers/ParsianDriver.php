@@ -36,23 +36,23 @@ class ParsianDriver implements PaymentDriver
         try {
             $client = $this->getInitClient();
 
-            $params = [
+            $payload = [
                 'LoginAccount' => $this->merchantCode,
                 'Amount' => $amountInRial,
                 'OrderId' => $transactionId,
                 'CallBackUrl' => $callBackUrl,
             ];
 
-            $result = $client->SalePaymentRequest(['requestData' => $params]);
+            $result = $client->SalePaymentRequest(['requestData' => $payload]);
 
             $token = $result->SalePaymentRequestResult->Token ?? null;
-            $status = $result->SalePaymentRequestResult->Status ?? -1;
-            $message = $result->SalePaymentRequestResult->Message ?? 'Error connecting to Parsian gateway';
+            $status = (string)($result->SalePaymentRequestResult->Status ?? -1);
+            $message = $result->SalePaymentRequestResult->Message ?? __('transaction.connection_failed', 'پارسیان');
 
-            if ($status === 0 && $token) {
+            if ($status == '0' && $token) {
                 return [
                     'success' => true,
-                    'message' => 'Payment request created successfully.',
+                    'message' => __('transaction.payment_initiated'),
                     'redirect_url' => "https://pec.shaparak.ir/NewIPG/?Token={$token}",
                     'token' => $token,
                 ];
@@ -61,16 +61,12 @@ class ParsianDriver implements PaymentDriver
             return [
                 'success' => false,
                 'message' => $message,
-                'redirect_url' => null,
-                'token' => null,
             ];
 
         } catch (SoapFault|BaseException $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'redirect_url' => null,
-                'token' => null,
             ];
         }
     }
@@ -80,11 +76,16 @@ class ParsianDriver implements PaymentDriver
      */
     public function verify(array $data): array
     {
-        $token = $data['Token'] ?? null;
-        if (!$token) {
+        $token = $data['Token'] ?? '';
+        $orderId = $data['OrderId'] ?? '';
+        $status = $data['status'] ?? '';
+        $amount = $data['Amount'] ?? '';
+        $rrn = $data['RNN'] ?? '';
+
+        if ($status != 0 || !$token) {
             return [
                 'success' => false,
-                'message' => 'Transaction token is missing.',
+                'message' => __('transaction.payment_failed'),
                 'token' => null,
                 'refId' => null,
             ];
@@ -96,18 +97,19 @@ class ParsianDriver implements PaymentDriver
             $params = [
                 'LoginAccount' => $this->merchantCode,
                 'Token' => $token,
+                'OrderId' => $orderId,
+                'Amount' => $amount,
             ];
 
-            $result = $client->ConfirmPayment(['requestData' => $params]);
+            $result = $client->ConfirmPaymentWithAmount(['requestData' => $params]);
 
-            $status = $result->ConfirmPaymentResult->Status ?? -1;
-            $rrn = $result->ConfirmPaymentResult->RRN ?? null;
-            $message = $result->ConfirmPaymentResult->Message ?? 'Error verifying transaction';
+            $status = (string)($result->ConfirmPaymentWithAmountResult->Status ?? -1);
+            $rrn = $result->ConfirmPaymentWithAmountResult->RRN ?? null;
+            $message = $result->ConfirmPaymentResult->Message ?? __('transaction.verify_payment_failed');
 
             return [
-                'success' => $status === 0,
+                'success' => $status == '0',
                 'message' => $message,
-                'token' => $token,
                 'refId' => $rrn,
             ];
 
@@ -115,8 +117,7 @@ class ParsianDriver implements PaymentDriver
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'token' => $token,
-                'refId' => null,
+                'refId' => $rrn,
             ];
         }
     }

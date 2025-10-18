@@ -45,15 +45,13 @@ class SamanDriver implements PaymentDriver
             if (!$result || $result <= 0) {
                 return [
                     'success' => false,
-                    'message' => 'Error connecting to Saman gateway',
-                    'redirect_url' => null,
-                    'token' => null,
+                    'message' => __('transaction.connection_failed', 'سامان'),
                 ];
             }
 
             return [
                 'success' => true,
-                'message' => 'Payment request created successfully.',
+                'message' => __('transaction.payment_initiated'),
                 'redirect_url' => "https://sep.shaparak.ir/Payment.aspx?Token={$result}",
                 'token' => $result,
             ];
@@ -62,8 +60,6 @@ class SamanDriver implements PaymentDriver
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'redirect_url' => null,
-                'token' => null,
             ];
         }
     }
@@ -73,14 +69,15 @@ class SamanDriver implements PaymentDriver
      */
     public function verify(array $data): array
     {
-        $refNum = $data['RefNum'] ?? null;
 
-        if (!$refNum) {
+        $refNum = $data['RefNum'] ?? null;
+        $state = $data['State'] ?? null;
+
+        if (!$refNum || $state !== 'OK') {
             return [
                 'success' => false,
-                'message' => 'Transaction reference number is missing',
-                'token' => null,
-                'refId' => null,
+                'message' => __('transaction.payment_failed'),
+                'refId' => $refNum,
             ];
         }
 
@@ -91,25 +88,22 @@ class SamanDriver implements PaymentDriver
             if (!$result || $result <= 0) {
                 return [
                     'success' => false,
-                    'message' => 'Transaction failed',
-                    'token' => $refNum,
-                    'refId' => null,
+                    'message' => __('transaction.payment_failed'),
+                    'refId' => $refNum,
                 ];
             }
 
             return [
                 'success' => true,
-                'message' => 'Transaction successfully verified',
-                'token' => $refNum,
-                'refId' => $result,
+                'message' => __('transaction.payment_verified'),
+                'refId' => $refNum,
             ];
 
         } catch (SoapFault|\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'token' => $refNum,
-                'refId' => null,
+                'refId' => $refNum,
             ];
         }
     }

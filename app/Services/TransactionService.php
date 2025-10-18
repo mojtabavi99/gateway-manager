@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\Gateway;
+use App\Enums\Status;
 use App\Exceptions\BaseException;
+use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
+use App\Services\Payment\DriverManager;
 use App\Traits\ExceptionTrait;
+use Illuminate\Http\JsonResponse;
 
 class TransactionService extends Service
 {
@@ -13,6 +18,10 @@ class TransactionService extends Service
     protected UserService $userService;
     protected TransactionRepository $transactionRepository;
 
+    /**
+     * @param UserService $userService
+     * @param TransactionRepository $transactionRepository
+     */
     public function __construct(
         UserService           $userService,
         TransactionRepository $transactionRepository
@@ -25,9 +34,11 @@ class TransactionService extends Service
     }
 
     /**
+     * @param array $data
+     * @return array|JsonResponse
      * @throws BaseException
      */
-    public function createUserAndTransaction(array $data)
+    public function deposit(array $data): array|JsonResponse
     {
         if (empty($data['mobile']) || empty($data['amount'])) {
             $this->throwValidation('');
@@ -44,36 +55,63 @@ class TransactionService extends Service
             'amount' => $data['amount'],
         ]);
 
-        return $this->response->success('', $transaction->toArray());
+        return $this->response->success(__('transaction.deposit_request_created'), $transaction->toArray());
     }
 
     /**
-     * @throws BaseException
+     * @param Transaction $transaction
+     * @return array|JsonResponse
      */
-    public function requestToIpg(array $data)
+    public function initiatePayment(Transaction $transaction): array|JsonResponse
     {
-        if (empty($data['transaction_id']) || empty($data['amount'])) {
-            $this->throwValidation('');
+        try {
+            $driverManager = new DriverManager();
+            $driver = $driverManager->driver($transaction->gateway->value);
+
+            $response = $driver->pay(
+                $transaction->id,
+                $transaction->amount,
+                route('transaction.site.verify_payment', $transaction->id)
+            );
+
+            if ($response['success']) {
+                $this->transactionRepository->update($transaction->id, [
+                    'payment_id' => $response['token'],
+                ]);
+
+                return $this->response->success(__('transaction.payment_initiated'), $response);
+            } else {
+                return $this->response->error($response['message']);
+            }
+        } catch (\Exception $e) {
+            return $this->response->error($e->getMessage());
+        }
+    }
+
+    public function verifyPayment(Transaction $transaction, array $data): array|JsonResponse
+    {
+        try {
+            $driverManager = new DriverManager();
+            $driver = $driverManager->driver($transaction->gateway->value);
+
+            $result = $driver->verify($data);
+
+            $updated_transaction = $this->transactionRepository->update($transaction->id, [
+                'referral_code' => $data['refId'],
+                'status' => $result['success'] ? Status::SUCCESS : Status::FAILED,
+            ]);
+
+            return $this->response->success(__('transaction.payment_verified'), [
+                'transaction' => $updated_transaction,
+            ]);
+        } catch (\Exception $e) {
+            $updated_transaction = $this->transactionRepository->update($transaction->id, [
+                'status' => Status::FAILED,
+            ]);
+
+            return $this->response->error($e->getMessage(), [
+                'transaction' => $updated_transaction,
+            ]);
         }
     }
 }
-
-
-//$client = new \SoapClient("https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL");
-//
-//$params = [
-//    'LoginAccount' => 'YOUR_MERCHANT_CODE',
-//    'Amount' => $data['amount'],
-//    'OrderId' => $data['transaction_id'],
-//    'CallBackUrl' => route('transaction-callback', $data['transaction_id']),
-//];
-//
-//$response = $client->SalePaymentRequest($params);
-//
-//if ($response->SalePaymentRequestResult->Status == 0) {
-//    return $this->response->success('', [
-//        'token' => $response->SalePaymentRequestResult->Token,
-//    ]);
-//} else {
-//    return $this->response->error($response->SalePaymentRequestResult->Message);
-//}

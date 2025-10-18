@@ -158,7 +158,7 @@ class Handler extends ExceptionHandler
      */
     protected function handleWebException(Throwable $e): Response|RedirectResponse
     {
-//        dd($e);
+        dd($e);
         if ($e instanceof BaseException) {
             return response()->view('errors.generic', [
                 'title' => 'ERROR!',

@@ -27,7 +27,6 @@ interface PaymentDriver
      * @return array{
      *     success: bool,
      *     message: string,
-     *     token: ?string,
      *     refId: ?string,
      * }
      */

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bonded_transaction_id')->nullable()->constrained('transactions')->onDelete('set null');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('gateway', Gateway::values())->default(Gateway::SADAD);
+            $table->enum('gateway', Gateway::values())->default(Gateway::PARSIAN);
             $table->enum('payment_method', ['online', 'cash', 'installment'])->default('online');
             $table->string('payment_id')->nullable();
             $table->string('referral_code')->nullable();
