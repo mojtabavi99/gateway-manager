@@ -2,23 +2,23 @@
 
 namespace App\Exceptions;
 
-use App\Helpers\Response\ResponseInterface;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\QueryException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Throwable;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use App\Services\Response\ResponseInterface;
 
 /**
  * Class Handler

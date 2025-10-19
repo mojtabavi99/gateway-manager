@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Helpers\Response\ResponseInterface;
+use App\Services\Response\ResponseInterface;
 
 abstract class Service
 {

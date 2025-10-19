@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Helpers\Response\ResponseFactory;
-use App\Helpers\Response\ResponseInterface;
+use App\Services\Response\ResponseFactory;
+use App\Services\Response\ResponseInterface;
 
 class ResponseServiceProvider extends ServiceProvider
 {
