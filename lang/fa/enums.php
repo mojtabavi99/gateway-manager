@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'gateways' => [
+        'sadad' => 'سداد',
+        'saman' => 'سامان',
+        'parsian' => 'پارسیان',
+        'pasargad' => 'پاسارگاد',
+        'zarinpal' => 'زرین پال',
+        'snapppay' => 'اسنپ پی',
+        'iran_kish' => 'ایران کیش',
+        'beh_pardakht' => 'به پرداخت ملت',
+        'asan_pardakht' => 'آسان پرداخت',
+    ],
+
     'status' => [
         'active' => 'فعال',
         'incomplete' => 'پروفایل ناقص',

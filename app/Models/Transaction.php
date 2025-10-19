@@ -42,7 +42,6 @@ class Transaction extends Model
     ];
 
     protected $casts = [
-        'gateway' => Gateway::class,
         'amount' => 'integer',
     ];
 

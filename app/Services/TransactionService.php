@@ -50,7 +50,7 @@ class TransactionService extends Service
 
         $transaction = $this->transactionRepository->create([
             'user_id' => $createUserResponse['data']['id'],
-            'gateway' => $data['gateway'],
+            'gateway' => (string)$data['gateway'],
             'amount' => $data['amount'],
         ]);
 
@@ -66,7 +66,7 @@ class TransactionService extends Service
     {
         try {
             $driverManager = new DriverManager();
-            $driver = $driverManager->driver($transaction->gateway->value);
+            $driver = $driverManager->driver($transaction->gateway);
 
             $response = $driver->pay(
                 $transaction->id,
@@ -95,7 +95,7 @@ class TransactionService extends Service
     {
         try {
             $driverManager = new DriverManager();
-            $driver = $driverManager->driver($transaction->gateway->value);
+            $driver = $driverManager->driver($transaction->gateway);
 
             $result = $driver->verify($data);
 
