@@ -30,7 +30,7 @@ class ParsianDriver implements PaymentDriver
      * @inheritDoc
      * @throws BaseException
      */
-    public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
+    public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'R'): array
     {
         $amountInRial = $currency === 'T' ? $amount * 10 : $amount;
 

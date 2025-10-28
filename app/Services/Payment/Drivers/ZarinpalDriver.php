@@ -37,7 +37,7 @@ class ZarinpalDriver implements PaymentDriver
      * @inheritDoc
      * @throws BaseException
      */
-    public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'T'): array
+    public function pay(int $transactionId, int $amount, string $callBackUrl, string $currency = 'R'): array
     {
         $amountInToman = $currency === 'R' ? $amount / 10 : $amount;
 

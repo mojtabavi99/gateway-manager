@@ -2,9 +2,6 @@
 
 namespace App\Enums;
 
-use function Laravel\Prompts\search;
-use function Symfony\Component\String\s;
-
 enum Status: int
 {
     case ACTIVE = 101;

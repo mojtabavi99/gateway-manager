@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <div class="container mt-5">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-5 col-md-7 col-12">
                 <div class="card shadow rounded-3 p-4">
@@ -21,13 +21,13 @@
                         @csrf
 
                         <p class="fw-bold mb-4">
-                            لطفا برای شارژ حساب خود اطلاعات زیر را کامل کنید
+                            برای افزایش اعتبار مبلغ مورد نظر خود را به ریال وارد نمایید
                         </p>
 
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label for="first_name" class="form-label">نام</label>
-                                <input type="text" class="form-control text-center" id="first_name" name="first_name"
+                                <input type="text" class="form-control form-control-lg text-center" id="first_name" name="first_name"
                                        value="{{ old('first_name') }}">
                                 @error('first_name')
                                 <small class="text-danger">{{ $message }}</small>
@@ -36,7 +36,7 @@
 
                             <div class="col-6 mb-3">
                                 <label for="last_name" class="form-label">نام خانوادگی</label>
-                                <input type="text" class="form-control text-center" id="last_name" name="last_name"
+                                <input type="text" class="form-control form-control-lg text-center" id="last_name" name="last_name"
                                        value="{{ old('last_name') }}">
                                 @error('last_name')
                                 <small class="text-danger">{{ $message }}</small>
@@ -45,7 +45,7 @@
 
                             <div class="col-12 mb-3">
                                 <label for="mobile" class="form-label">شماره موبایل</label>
-                                <input type="text" class="form-control text-center" id="mobile" name="mobile"
+                                <input type="text" class="form-control form-control-lg text-center" id="mobile" name="mobile"
                                        value="{{ old('mobile') }}">
                                 @error('mobile')
                                 <small class="text-danger">{{ $message }}</small>
@@ -53,8 +53,8 @@
                             </div>
 
                             <div class="col-12 mb-4">
-                                <label for="amount" class="form-label">مبلغ (تومان)</label>
-                                <input type="text" class="form-control text-center" id="amount" name="amount"
+                                <label for="amount" class="form-label">مبلغ</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="amount" name="amount"
                                        value="{{ old('amount') }}" inputmode="numeric" autocomplete="off">
                                 @error('amount')
                                 <small class="text-danger">{{ $message }}</small>
@@ -81,7 +81,7 @@
                             </div>
                         @endif
 
-                        <button type="submit" class="btn btn-success fw-bold w-100 mt-3">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold w-100 mt-3">
                             تایید و پرداخت
                         </button>
                     </form>
